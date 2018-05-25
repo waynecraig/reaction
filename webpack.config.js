@@ -1,42 +1,44 @@
 const HtmlWebpackPlugin = require('html-webpack-plugin');
-const UglifyJsPlugin = require('webpack/lib/optimize/UglifyJsPlugin');
-
-const WATCH = !!process.env.watch;
-const EXPLUGINS = process.env.compress ? [
-    new DefinePlugin({
-        'process.env.NODE_ENV': '"production"'
-    }),
-    new UglifyJsPlugin({compress:{warnings:false}})
-] : [];
-
 
 module.exports = {
+
+    mode: 'none',
 
     entry: './app.js',
 
     output: {
-        path: './dist',
-        filename: '[name].js',
-        sourceMapFilename: '[name].map'
+        path: __dirname + '/dist',
+        filename: 'main.js',
+        sourceMapFilename: 'main.map'
     },
 
     module: {
-        loaders: [
-			{
-				test: /\.js$/,
-                exclude: /node_modules/,
-                loader: 'babel?presets[]=react,presets[]=es2015'
+      rules: [
+        {
+          test: /\.js$/,
+          exclude: /node_modules/,
+          use: {
+            loader: "babel-loader"
+          }
+        },
+        {
+          test: /\.html$/,
+          use: [
+            {
+              loader: "html-loader"
             }
-        ]
+          ]
+        }
+      ]
     },
 
     plugins: [
         new HtmlWebpackPlugin({
-            template: 'containers/template.html'
+            template: 'containers/template.html',
+            filename: "./index.html"
         })
-   ].concat(EXPLUGINS),
+   ],
 
     devtool: 'source-map',
 
-    watch: WATCH
 }
